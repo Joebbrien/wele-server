@@ -5,13 +5,15 @@ const bodyParsar = require("body-parser");
 const cor = require("cors");
 const fs = require("fs");
 const https = require("https");
-const mongoDB = "mongodb://127.0.0.1:27017/wele_serverdb";
+const mongoDB = "mongodb://127.0.0.1:27017/wele_server";
 const userRoute = require("./src/routes/user");
 
 //database connection and configuration
-mongoose.connect(mongoDB, { useNewUrlParser: true });
+mongoose.connect(mongoDB, { useNewUrlParser: true, useCreateIndex: true, useUnifiedTopology: true });
 var db = mongoose.connection;
 db.on("error", console.error.bind(console, "MongoDB connection error:"));
+
+
 const app = express();
 app.use(helmet());
 
