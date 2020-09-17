@@ -5,6 +5,7 @@ const bcrypt = require("bcryptjs");
 const multer = require("multer");
 const mail = require("../utils/mailer");
 const randomGen = require("../utils/random");
+const validator = require("../handlers/dataValidator");
 
 const app = express.Router();
 
@@ -13,24 +14,6 @@ const upload = multer({
   limits: {
     fileSize: 1000000
   }
-});
-
-app.get("/notify", async (req, res) => {
-  //notify user with an email
-  //try {
-  const email = "joebbrian@bongohive.co.zm";
-  const text =
-    "Your account has been created. Complete your signup by following this link https://ecr.net/complete/registration";
-  const subject = "ECR PROCUREMENT SYSTEM ACCESS";
-  const notification = await mail.sendMailWithGrid(email, subject, text);
-  if (!notification) {
-    res.status(200).send("Email sent to " + email);
-  } else {
-    res.status(500).send("Something went wrong");
-  }
-  //   } catch (e) {
-  //     res.status(500).send(e.message);
-  //   }
 });
 
 app.post("/upload/profile/:id", upload.single("upload"), async (req, res) => {
@@ -61,76 +44,18 @@ app.post("/upload/profile/:id", upload.single("upload"), async (req, res) => {
 });
 
 app.post("/create", async (req, res) => {
-  //create a new user
   try {
     const newUser = req.body;
-    //console.log(newUser);
     const createUser = new user(req.body);
+
     await createUser.save();
     if (!createUser) {
-      console.log(createUser);
-      res.status(500).send(createUser);
-    } else {
-      const email = createUser.userEmail;
-      const text =
-        "Your account has been added to ECR Procurement system by Thandie. Complete your signup by following this link https://ecr.net/complete/registration";
-      const subject = "ECR PROCUREMENT SYSTEM ACCESS";
-      const notification = await mail.sendMailWithGrid(email, subject, text);
-      if (!notification) {
-        res
-          .status(201)
-          .send("user has been saved and access email sent to " + email);
-      } else {
-        res
-          .status(500)
-          .send("Error occured when trying to send access email to user");
-      }
+      throw new Error("Failed create user, try again.")
     }
-  } catch (e) {
-    console.log(e.message);
-    console.log("error occured");
-    res.status(500).send(e.message);
-  }
-});
-
-app.get("/outOfOffice/:id", async (req, res) => {
-  //set user to be out of office
-  try {
-    const token = req.params.id;
-    console.log(req.body);
-    console.log(token);
-    const findUser = await user.findById({ _id: token }).exec();
-
-    if (findUser) {
-      //user is found
-      findUser.isInOffice = req.body.inOffice;
-      await findUser.save();
-      if (!findUser) {
-        res.status(500).send("Unable to update out of office status");
-      } else {
-        res.status(200).send("Office status is set to " + req.body.inOffice);
-      }
-    } else {
-      // user not found
-      res.status(500).send("wrong credentials");
-    }
-  } catch (e) {
-    //something has gone wrong
-    res.status(500).send("Something has gone wrong");
-  }
-});
-
-app.get("/list", async (req, res) => {
-  //get a list of all application users
-  try {
-    const users = await user.find({}).exec();
-    if (!users) {
-      res.status(200).send("No users found");
-    } else {
-      res.status(201).send(users);
-    }
-  } catch (e) {
-    res.status(500).send(e.message);
+    res.send({status: 201, message: "User account created successfully",user: createUser});
+  } catch (error) {
+    console.log("user error: ",error.stack);
+    res.send({status: 500, message: error.message});
   }
 });
 

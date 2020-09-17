@@ -5,6 +5,7 @@
   "license": "MIT",
   "scripts": {
     "start": "NODE_ENV=production node userApp.js",
+    "coverage": "nyc --reporter=text --reporter=html mocha --exit -- ./tests/*.test.js",
     "dev": "NODE_ENV=dev nodemon userApp.js",
     "test": "DEBUG=server:debug NODE_ENV=test mocha --exit -- ./tests/*.test.js "
   },
@@ -35,6 +36,7 @@
     "nodemailer": "6.4.11",
     "nodemailer-smtp-transport": "^2.7.4",
     "nodemon": "2.0.4",
+    "nyc": "^15.1.0",
     "pm2": "^4.4.1",
     "supertest": "^4.0.2",
     "validator": "13.1.1",

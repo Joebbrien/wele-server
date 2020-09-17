@@ -19,7 +19,7 @@ const userSchema = new mongoose.Schema({
   userEmail: {
     type: String,
     unique: true,
-    required: true
+    required: false
   },
   userPhone: {
     type: String,
@@ -47,7 +47,6 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: false
   },
-
   createdAt: {
     type: String,
     default: moment()
@@ -56,16 +55,12 @@ const userSchema = new mongoose.Schema({
   }
 });
 
-userSchema.plugin(mongoosePaginate);
-
 userSchema.pre("save", async function(next) {
-  //hash chapter password from here
   const user = this;
-
   if (user.isModified("userPassword")) {
     user.userPassword = await bcrypt.hash(user.userPassword, 8);
   }
   next();
 });
 
-module.exports = mongoose.model("users", userSchema, "Users");
+module.exports = mongoose.model("users", userSchema);
