@@ -13,17 +13,21 @@ after(async () => {
 
 
 describe("WELE UNIT AND INTEGRATED TESTS",(done)=>{
-  context("RUNNING USER TESTS", function(){
+  context("RUNNING USER FUNCTIONAL TESTS", function(){
     it("/create should create a user account ",async ()=>{
       const user ={
         firstName: "Joebbrien",
         lastName: "Bundabunda",
+        userEmail:"joebbrian@gmail.com",
         userPassword: "pass12345",
         userPhone: 260963671071
       }
       const response = await request(server).post("/api/v1/user/create").send(user);
       chai.expect(response.body.status).to.equal(201);
-      console.log("user: ",response.body);
-        })
+    })
+    it("/list should list all users", async ()=>{
+      const response = await request(server).get("/api/v1/user/list").send();
+      chai.expect(response.body.users).to.be.an.instanceOf(Array);
+    })
   })
 })

@@ -19,7 +19,7 @@ const userSchema = new mongoose.Schema({
   userEmail: {
     type: String,
     unique: true,
-    required: false
+    required: true
   },
   userPhone: {
     type: String,

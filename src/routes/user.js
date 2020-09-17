@@ -54,10 +54,20 @@ app.post("/create", async (req, res) => {
     }
     res.send({status: 201, message: "User account created successfully",user: createUser});
   } catch (error) {
-    console.log("user error: ",error.stack);
     res.send({status: 500, message: error.message});
   }
 });
+app.get("/list", async (req, res, next)=>{
+  try {
+   const findUsers = await user.find({isActive: true}).exec()
+   if(findUsers.length < 1){
+     res.send({status: 404, message: "No users found", users: findUsers});
+   }
+  res.send({status: 200, message: "Users found", users: findUsers});
+  } catch (error) {
+    res.send({status: 500,message: error.message});
+  }
+})
 
 app.patch("/completeSignup/:id", async (req, res) => {
   //complete user sign up with a token that was
